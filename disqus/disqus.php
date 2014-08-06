@@ -937,11 +937,11 @@ function dsq_dash_comment_counts() {
     $stats = (object) $stats;
 ?>
 <script type="text/javascript">
-jQuery(function($) {
+(function($) {
     $('#dashboard_right_now').find('.b-comments a').html('<?php echo number_format($stats->total_comments); ?>').end().find('.b_approved a').html('<?php echo number_format($stats->approved); ?>').end().find('.b-waiting a').html('<?php echo number_format($stats->moderated); ?>').end().find('.b-spam a').html('<?php echo number_format($stats->spam); ?>');
     $('#dashboard_recent_comments div.trackback').remove();
     $('#dashboard_right_now .inside table td.last a, #dashboard_recent_comments .inside .textright a.button').attr('href', 'edit-comments.php?page=disqus');
-});
+})(jQuery);
 </script>
 <?php
 }
@@ -985,7 +985,7 @@ p.status {
 }
 </style>
 <script type="text/javascript">
-jQuery(function($) {
+(function($) {
     $('#dsq-tabs li').click(function() {
         $('#dsq-tabs li.selected').removeClass('selected');
         $(this).addClass('selected');
@@ -997,91 +997,99 @@ jQuery(function($) {
     }
     dsq_fire_export();
     dsq_fire_import();
-});
+})(jQuery);
+
 dsq_fire_export = function() {
-    var $ = jQuery;
-    $('#dsq_export a.button, #dsq_export_retry').unbind().click(function() {
-        $('#dsq_export').html('<p class="status"></p>');
-        $('#dsq_export .status').removeClass('dsq-export-fail').addClass('dsq-exporting').html('Processing...');
-        dsq_export_comments();
-        return false;
-    });
+    (function($) {
+        $('#dsq_export a.button, #dsq_export_retry').unbind().click(function() {
+            $('#dsq_export').html('<p class="status"></p>');
+            $('#dsq_export .status').removeClass('dsq-export-fail').addClass('dsq-exporting').html('Processing...');
+            dsq_export_comments();
+            return false;
+        });
+    })(jQuery);
 }
+
 dsq_export_comments = function() {
-    var $ = jQuery;
-    var status = $('#dsq_export .status');
-    var export_info = (status.attr('rel') || '0|' + (new Date().getTime()/1000)).split('|');
-    $.get(
-        '<?php echo admin_url('index.php'); ?>',
-        {
-            cf_action: 'export_comments',
-            post_id: export_info[0],
-            timestamp: export_info[1]
-        },
-        function(response) {
-            switch (response.result) {
-                case 'success':
-                    status.html(response.msg).attr('rel', response.post_id + '|' + response.timestamp);
-                    switch (response.status) {
-                        case 'partial':
-                            dsq_export_comments();
-                            break;
-                        case 'complete':
-                            status.removeClass('dsq-exporting').addClass('dsq-exported');
-                            break;
-                    }
-                break;
-                case 'fail':
-                    status.parent().html(response.msg);
-                    dsq_fire_export();
-                break;
-            }
-        },
-        'json'
-    );
+    (function($) {
+        var status = $('#dsq_export .status');
+        var export_info = (status.attr('rel') || '0|' + (new Date().getTime()/1000)).split('|');
+        $.get(
+            '<?php echo admin_url('index.php'); ?>',
+            {
+                cf_action: 'export_comments',
+                post_id: export_info[0],
+                timestamp: export_info[1]
+            },
+            function(response) {
+                switch (response.result) {
+                    case 'success':
+                        status.html(response.msg).attr('rel', response.post_id + '|' + response.timestamp);
+                        switch (response.status) {
+                            case 'partial':
+                                dsq_export_comments();
+                                break;
+                            case 'complete':
+                                status.removeClass('dsq-exporting').addClass('dsq-exported');
+                                break;
+                        }
+                    break;
+                    case 'fail':
+                        status.parent().html(response.msg);
+                        dsq_fire_export();
+                    break;
+                }
+            },
+            'json'
+        );
+    })(jQuery);
 }
+
 dsq_fire_import = function() {
-    var $ = jQuery;
-    $('#dsq_import a.button, #dsq_import_retry').unbind().click(function() {
-        var wipe = $('#dsq_import_wipe').is(':checked');
-        $('#dsq_import').html('<p class="status"></p>');
-        $('#dsq_import .status').removeClass('dsq-import-fail').addClass('dsq-importing').html('Processing...');
-        dsq_import_comments(wipe);
-        return false;
-    });
+    (function($) {
+        $('#dsq_import a.button, #dsq_import_retry').unbind().click(function() {
+            var wipe = $('#dsq_import_wipe').is(':checked');
+            $('#dsq_import').html('<p class="status"></p>');
+            $('#dsq_import .status').removeClass('dsq-import-fail').addClass('dsq-importing').html('Processing...');
+            dsq_import_comments(wipe);
+            return false;
+        });
+    })(jQuery);
 }
+
 dsq_import_comments = function(wipe) {
-    var $ = jQuery;
-    var status = $('#dsq_import .status');
-    var last_comment_id = status.attr('rel') || '0';
-    $.get(
-        '<?php echo admin_url('index.php'); ?>',
-        {
-            cf_action: 'import_comments',
-            last_comment_id: last_comment_id,
-            wipe: (wipe ? 1 : 0)
-        },
-        function(response) {
-            switch (response.result) {
-                case 'success':
-                    status.html(response.msg).attr('rel', response.last_comment_id);
-                    switch (response.status) {
-                        case 'partial':
-                            dsq_import_comments(false);
-                            break;
-                        case 'complete':
-                            status.removeClass('dsq-importing').addClass('dsq-imported');
-                            break;
-                    }
-                break;
-                case 'fail':
-                    status.parent().html(response.msg);
-                    dsq_fire_import();
-                break;
-            }
-        },
-        'json'
-    );
+    (function($) {
+        var status = $('#dsq_import .status');
+        var last_comment_id = status.attr('rel') || '0';
+        $.get(
+            '<?php echo admin_url('index.php'); ?>',
+            {
+                cf_action: 'import_comments',
+                last_comment_id: last_comment_id,
+                wipe: (wipe ? 1 : 0)
+            },
+            function(response) {
+                switch (response.result) {
+                    case 'success':
+                        status.html(response.msg).attr('rel', response.last_comment_id);
+                        switch (response.status) {
+                            case 'partial':
+                                dsq_import_comments(false);
+                                break;
+                            case 'complete':
+                                status.removeClass('dsq-importing').addClass('dsq-imported');
+                                break;
+                        }
+                    break;
+                    case 'fail':
+                        status.parent().html(response.msg);
+                        dsq_fire_import();
+                    break;
+                }
+            },
+            'json'
+        );
+    })(jQuery);
 }
 </script>
 <?php
