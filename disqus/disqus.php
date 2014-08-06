@@ -8,12 +8,6 @@ Version: 2.77
 Author URI: http://disqus.com/
 */
 
-/*.
-    require_module 'standard';
-    require_module 'pcre';
-    require_module 'mysql';
-.*/
-
 require_once(dirname(__FILE__) . '/lib/wp-api.php');
 
 if (defined('DISQUS_LOCAL')) { // DISQUS defines this for local development purposes
@@ -464,7 +458,7 @@ function dsq_request_handler() {
                             $result = 'success';
                         }
                     }
-// send AJAX response
+                    // send AJAX response
                     $response = compact('result', 'timestamp', 'status', 'post_id', 'msg', 'eof', 'response');
                     header('Content-type: text/javascript');
                     echo cf_json_encode($response);
@@ -608,8 +602,6 @@ function dsq_sync_forum($last_comment_id=false, $force=false) {
     if ($last_comment_id) {
         $last_comment_id++;
     }
-
-    //$last_comment_id = 0;
 
     // Pull comments from API
     $dsq_response = $dsq_api->get_forum_posts($last_comment_id);
@@ -1093,7 +1085,7 @@ dsq_import_comments = function(wipe) {
 }
 </script>
 <?php
-// HACK: Our own styles for older versions of WordPress.
+        // HACK: Our own styles for older versions of WordPress.
         global $wp_version;
         if ( version_compare($wp_version, '2.5', '<') ) {
             echo "<link rel='stylesheet' href='" . plugins_url( 'media/styles/manage-pre25.css', __FILE__ ) . "' type='text/css' />";
@@ -1265,10 +1257,6 @@ add_filter('bloginfo_url', 'dsq_bloginfo_url');
  */
 if(!function_exists('cf_json_encode')) {
     function cf_json_encode($data) {
-// json_encode is sending an application/x-javascript header on Joyent servers
-// for some unknown reason.
-//         if(function_exists('json_encode')) { return json_encode($data); }
-//         else { return cfjson_encode($data); }
         return cfjson_encode($data);
     }
 
@@ -1524,7 +1512,6 @@ function dsq_pointer_print_scripts() {
 ?>
     
     <script type="text/javascript">
-    //<![CDATA[
     jQuery(document).ready( function($) {
         $('#menu-comments').pointer({
             content:        '<?php echo $pointer_content; ?>',
@@ -1541,7 +1528,6 @@ function dsq_pointer_print_scripts() {
                             }
         }).pointer('open');
     });
-    //]]>
     </script>
 
 <?php

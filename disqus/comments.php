@@ -6,11 +6,6 @@ if (DISQUS_DEBUG) {
 
 <div id="disqus_thread">
     <?php if (!get_option('disqus_disable_ssr') && have_comments()): ?>
-        <?php
-        // if (is_file(TEMPLATEPATH . '/comments.php')) {
-        //     include(TEMPLATEPATH . '/comments.php');
-        // }
-        ?>
         <div id="dsq-content">
 
 <?php if (get_comment_pages_count() > 1 && get_option('page_comments')): // Are there comments to navigate through? ?>
